@@ -27,6 +27,7 @@ import {
 } from '../components/Editor/MobileEditor';
 import IDEOverlays from '../components/IDEOverlays';
 import useIsMobile from '../hooks/useIsMobile';
+import { CrossIcon } from '../../../common/icons';
 
 function getTitle(project) {
   const { id } = project;
@@ -104,6 +105,7 @@ const IDEView = () => {
   const [sidebarSize, setSidebarSize] = useState(160);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const [MaxSize, setMaxSize] = useState(window.innerWidth);
+  const [displayBanner, setDisplayBanner] = useState(true);
 
   const cmRef = useRef({});
 
@@ -112,6 +114,29 @@ const IDEView = () => {
   const syncFileContent = () => {
     const file = cmRef.current.getContent();
     dispatch(updateFileContent(file.id, file.content));
+  };
+
+  const Banner = () => {
+    // temporary banner to display funding opportunities
+    const bannerURL =
+      'https://docs.google.com/forms/d/e/1FAIpQLSeDnDeE2rNyLS-y7L2FncLfzqzt-eWo8t7USktLjAzafuaeKg/viewform';
+    const bannerCopy =
+      // eslint-disable-next-line max-len
+      'Help us shape p5.js! If you are an artist, teacher, or use p5.js in any capacity, we would love to hear from you!';
+
+    return (
+      <div className="banner">
+        <a href={bannerURL}>{bannerCopy}</a>
+        <button
+          className="banner-close-button"
+          onClick={() => {
+            setDisplayBanner(!displayBanner);
+          }}
+        >
+          <CrossIcon />
+        </button>
+      </div>
+    );
   };
 
   useEffect(() => {
@@ -170,6 +195,7 @@ const IDEView = () => {
       <Helmet>
         <title>{getTitle(project)}</title>
       </Helmet>
+      {displayBanner && <Banner />}
       <IDEKeyHandlers getContent={() => cmRef.current?.getContent()} />
       <WarnIfUnsavedChanges />
       <Toast />
